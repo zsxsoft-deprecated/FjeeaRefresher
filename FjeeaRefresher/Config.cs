@@ -10,6 +10,7 @@ namespace FjeeaRefresher
     {
         private string username = "";
         private string password = "";
+        private string examinee = "";
         private int interval = 60;
         
         [DataMember]
@@ -27,6 +28,16 @@ namespace FjeeaRefresher
             }
         }
 
+        /// <summary>
+        /// Gets or sets the password.
+        /// </summary>
+        /// <value>
+        /// The password.
+        /// </value>
+        /// <remarks>
+        /// I really don't mind the security of the password!
+        /// What the fuck should I care it?
+        /// </remarks>
         [DataMember]
         public string Password
         {
@@ -39,6 +50,21 @@ namespace FjeeaRefresher
                 if (password == value) return;
                 password = value;
                 OnPropertyChanged(new PropertyChangedEventArgs("Password"));
+            }
+        }
+
+        [DataMember]
+        public string Examinee
+        {
+            get
+            {
+                return examinee;
+            }
+            set
+            {
+                if (examinee == value) return;
+                examinee = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("Examinee"));
             }
         }
 
