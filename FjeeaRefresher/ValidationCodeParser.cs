@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections;
 
 namespace FjeeaRefresher
 {
@@ -26,6 +27,25 @@ namespace FjeeaRefresher
                 Directory.GetFiles($"{storePath}\\{i}").ToList().ForEach(str => {
                     studiedStore[i].Add(BitmapToString(new Bitmap(str)));
                 });
+            }
+        }
+        /// <summary>
+        /// Initializes the store from ResourceSet
+        /// </summary>
+        /// <param name="dictionaryStore">The dictionary store.</param>
+        public static void InitStore(System.Resources.ResourceSet dictionaryStore)
+        {
+            for (var i = 0; i <= 9; i++)
+            {
+                studiedStore[i] = new List<string>();
+            }
+            foreach (DictionaryEntry item in dictionaryStore)
+            {
+                var resourceKey = item.Key.ToString();
+                if (resourceKey[0] != '_') continue;
+                var splittedKey = resourceKey.Split('_');
+                var storeKey = Convert.ToInt32(splittedKey[1]);
+                studiedStore[storeKey].Add(BitmapToString(((Bitmap)item.Value)));
             }
         }
 

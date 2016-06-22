@@ -23,7 +23,8 @@ namespace FjeeaRefresher
         public MainWindow()
         {
             InitializeComponent();
-            ValidationCodeParser.InitStore("Z:\\Out\\");
+
+            ValidationCodeParser.InitStore(FjeeaResource.ResourceGetter.GetResources());
             MessageBox.Show(ValidationCodeParser.GetVerifyCode("Z:\\Samples\\65.jpg"));
         }
     }
