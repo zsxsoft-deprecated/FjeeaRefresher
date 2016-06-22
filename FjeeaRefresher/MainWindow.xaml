@@ -5,8 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FjeeaRefresher"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="MainWindow" Height="350" Width="804">
+    <Grid x:Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Username  " VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="18"/>
+            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Password  " VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="18"/>
+            <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="Interval  " VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="18"/>
+            <Button x:Name="ButtonSubmit" Grid.ColumnSpan="2" Content=" Submit " HorizontalAlignment="Center" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontSize="18"/>
+            <TextBox x:Name="TextUsername" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Text="{Binding Path=Username, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox x:Name="TextPassword" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Text="{Binding Path=Password, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox x:Name="TextInterval" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="18" Text="{Binding Path=Interval, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid Grid.Column="1">
+            <WebBrowser VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="WebBrowser" />
+        </Grid>
     </Grid>
 </Window>

@@ -24,8 +24,8 @@ namespace FjeeaRefresher
         {
             InitializeComponent();
 
-            ValidationCodeParser.InitStore(FjeeaResource.ResourceGetter.GetResources());
-            MessageBox.Show(ValidationCodeParser.GetVerifyCode("Z:\\Samples\\65.jpg"));
+            
+            MainGrid.DataContext = Config.Data;
         }
     }
 }
