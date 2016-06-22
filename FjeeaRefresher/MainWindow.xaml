@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FjeeaRefresher"
         mc:Ignorable="d"
-        Title="Refresher" Height="350" Width="804" Icon="fjeea.ico">
+        Title="Refresher" Height="350" Width="804" Icon="fjeea.ico" Unloaded="Window_Unloaded" Closing="Window_Closing">
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>

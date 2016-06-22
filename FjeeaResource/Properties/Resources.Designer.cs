@@ -673,6 +673,16 @@ namespace FjeeaResource.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        public static System.Drawing.Bitmap _1_311 {
+            get {
+                object obj = ResourceManager.GetObject("_1_311", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         public static System.Drawing.Bitmap _1_32 {
             get {
                 object obj = ResourceManager.GetObject("_1_32", resourceCulture);
@@ -1126,6 +1136,16 @@ namespace FjeeaResource.Properties {
         public static System.Drawing.Bitmap _2_40 {
             get {
                 object obj = ResourceManager.GetObject("_2_40", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        public static System.Drawing.Bitmap _2_41 {
+            get {
+                object obj = ResourceManager.GetObject("_2_41", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

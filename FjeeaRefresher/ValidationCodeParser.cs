@@ -120,8 +120,7 @@ namespace FjeeaRefresher
 
                     var gray = (int)(color.R * 0.3 + color.G * 0.59 + color.B * 0.11);
                     var newColor = Color.FromArgb(gray, gray, gray);
-                    var value = 255 - newColor.B;
-                    var bppColor = value > 127 ? Color.Black : Color.White;
+                    var bppColor = newColor.B < 127 ? Color.Black : Color.White;
                     newBitmap.SetPixel(i, j, bppColor);
                 }
             }

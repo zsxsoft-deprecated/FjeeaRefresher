@@ -139,8 +139,8 @@ namespace FjeeaRefresher
                 }
             })).Start();
         }
-
-        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             NotifyIcon.Visible = false;
         }
