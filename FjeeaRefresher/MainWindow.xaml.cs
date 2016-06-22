@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +24,15 @@ namespace FjeeaRefresher
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string LastCachedText = "";
+
+        [ComImport, Guid("6D5140C1-7436-11CE-8034-00AA006009FA"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        private interface IOleServiceProvider
+        {
+            [PreserveSig]
+            int QueryService([In] ref Guid guidService, [In] ref Guid riid, [MarshalAs(UnmanagedType.IDispatch)] out object ppvObject);
+        }
+
         public System.Windows.Threading.DispatcherTimer Timer = new System.Windows.Threading.DispatcherTimer
         {
             IsEnabled = true, 
@@ -32,16 +45,67 @@ namespace FjeeaRefresher
             Text = "FjeeaRefresher"
         };
 
+
+        public async void GetScoreInThread()
+        {
+            Console.WriteLine("Getting score");
+            var TryLoginText = await NetworkOperator.TryLogin();
+            if (ValidationCodeParser.CalcSimilarDegree(TryLoginText, LastCachedText) > 20 || LastCachedText == "")
+            {
+                LastCachedText = TryLoginText;
+                Dispatcher.Invoke(() =>
+                {
+                    WebBrowser.NavigateToString(NetworkOperator.FormatUrlInHtml(TryLoginText));
+                });
+                NotifyIcon.ShowBalloonTip(30000, "FjeeaRefresher", TryLoginText, System.Windows.Forms.ToolTipIcon.Info);
+            } 
+            
+
+        }
+
+        public void GetScore()
+        {
+            new Thread(new ThreadStart(GetScoreInThread)).Start();
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             MainGrid.DataContext = Config.Data;
+            Timer.Interval = new TimeSpan(0, 0, 0, Config.Data.Interval);
+            Timer.Tick += (object sender, EventArgs args) =>
+            {
+                GetScore();
+            };
             NotifyIcon.Click += (object sender, EventArgs args) =>
             {
                 WindowState = WindowState.Normal;
                 Show();
-            };
-            
+            };/*
+            WebBrowser.Navigating += new NavigatingCancelEventHandler((object sender, NavigatingCancelEventArgs e) =>
+            {
+                HtmlDocument = WebBrowser.Document
+            });*/
+            WebBrowser.Navigated += new NavigatedEventHandler((object sender, NavigationEventArgs e) =>
+            {
+                ///<see cref="http://stackoverflow.com/questions/6138199/wpf-webbrowser-control-how-to-supress-script-errors"/>
+                // get an IWebBrowser2 from the document
+                IOleServiceProvider sp = WebBrowser.Document as IOleServiceProvider;
+                if (sp != null)
+                {
+                    Guid IID_IWebBrowserApp = new Guid("0002DF05-0000-0000-C000-000000000046");
+                    Guid IID_IWebBrowser2 = new Guid("D30C1661-CDAF-11d0-8A3E-00C04FC9E26E");
+
+                    object webBrowser;
+                    sp.QueryService(ref IID_IWebBrowserApp, ref IID_IWebBrowser2, out webBrowser);
+                    if (webBrowser != null)
+                    {
+                        webBrowser.GetType().InvokeMember("Silent", BindingFlags.Instance | BindingFlags.Public | BindingFlags.PutDispProperty, null, webBrowser, new object[] { true });
+                    }
+                }
+            }
+            );
+
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -56,6 +120,12 @@ namespace FjeeaRefresher
         {
             Timer.Interval = new TimeSpan(0, 0, 0, Config.Data.Interval);
             Config.Save();
+            GetScore();
+        }
+
+        private void ButtonTest_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -63,6 +63,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Config.cs" />
+    <Compile Include="Encryption.cs" />
+    <Compile Include="NetworkOperator.cs" />
     <Compile Include="PasswordHelper.cs" />
     <Compile Include="ValidationCodeParser.cs" />
     <Page Include="MainWindow.xaml">

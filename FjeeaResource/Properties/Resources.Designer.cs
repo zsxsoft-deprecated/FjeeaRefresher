@@ -2893,6 +2893,16 @@ namespace FjeeaResource.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        public static System.Drawing.Bitmap _6_48 {
+            get {
+                object obj = ResourceManager.GetObject("_6_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         public static System.Drawing.Bitmap _6_5 {
             get {
                 object obj = ResourceManager.GetObject("_6_5", resourceCulture);
@@ -6017,6 +6027,32 @@ namespace FjeeaResource.Properties {
             get {
                 object obj = ResourceManager.GetObject("Icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 // BigInt, a suite of routines for performing multiple-precision arithmetic in
+        ///// JavaScript.
+        /////
+        ///// Copyright 1998-2005 David Shapiro.
+        /////
+        ///// You may use, re-use, abuse,
+        ///// copy, and modify this code to your liking, but please keep this header.
+        ///// Thanks!
+        /////
+        ///// Dave Shapiro
+        ///// dave@ohdave.com
+        ///
+        ///// IMPORTANT THING: Be sure to set maxDigits according to your precision
+        ///// needs. Use the setMaxDigits() function to do this. See comments below.
+        /////
+        ///// Tweaked by Ian Bunning
+        ///// Alterations:
+        ///// Fix bu [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        /// </summary>
+        public static string RSAJavaScript {
+            get {
+                return ResourceManager.GetString("RSAJavaScript", resourceCulture);
             }
         }
     }
