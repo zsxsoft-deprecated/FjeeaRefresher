@@ -56,7 +56,7 @@ namespace FjeeaRefresher
             var ImageStream = await Ret.Content.ReadAsStreamAsync();
             var ImageBitmap = new Bitmap(ImageStream);
             string ValidationCode = ValidationCodeParser.GetVerifyCode(ImageBitmap);
-            ImageBitmap.Save("Z:\\" + ValidationCode + ".jpg");
+            //ImageBitmap.Save("Z:\\" + ValidationCode + ".jpg");
             return ValidationCode;
         }
 

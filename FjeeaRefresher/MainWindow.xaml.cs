@@ -49,10 +49,11 @@ namespace FjeeaRefresher
         public async void GetScoreInThread()
         {
             Console.WriteLine("Getting score");
-            var TryLoginText = await NetworkOperator.TryLogin();
+            var TryLoginText = await NetworkOperator.PostToGKCJ();
             if (ValidationCodeParser.CalcSimilarDegree(TryLoginText, LastCachedText) > 20 || LastCachedText == "")
             {
                 LastCachedText = TryLoginText;
+                if (TryLoginText == "") return;
                 Dispatcher.Invoke(() =>
                 {
                     WebBrowser.NavigateToString(NetworkOperator.FormatUrlInHtml(TryLoginText));
@@ -125,7 +126,23 @@ namespace FjeeaRefresher
 
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
+            new Thread(new ThreadStart(async () =>
+            {
+                var TryLoginText = await NetworkOperator.TryLogin();
+                if (ValidationCodeParser.CalcSimilarDegree(TryLoginText, LastCachedText) > 20 || LastCachedText == "")
+                {
+                    LastCachedText = TryLoginText;
+                    Dispatcher.Invoke(() =>
+                    {
+                        WebBrowser.NavigateToString(NetworkOperator.FormatUrlInHtml(TryLoginText));
+                    });
+                }
+            })).Start();
+        }
 
+        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+            NotifyIcon.Visible = false;
         }
     }
 }
