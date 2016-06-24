@@ -64,10 +64,7 @@ namespace FjeeaRefresher
 
         }
 
-        public void GetScore()
-        {
-            new Thread(new ThreadStart(GetScoreInThread)).Start();
-        }
+        public void GetScore() =>Task.Factory.StartNew(GetScoreInThread);
 
         public MainWindow()
         {
@@ -99,10 +96,7 @@ namespace FjeeaRefresher
 
                     object webBrowser;
                     sp.QueryService(ref IID_IWebBrowserApp, ref IID_IWebBrowser2, out webBrowser);
-                    if (webBrowser != null)
-                    {
-                        webBrowser.GetType().InvokeMember("Silent", BindingFlags.Instance | BindingFlags.Public | BindingFlags.PutDispProperty, null, webBrowser, new object[] { true });
-                    }
+                    webBrowser?.GetType().InvokeMember("Silent", BindingFlags.Instance | BindingFlags.Public | BindingFlags.PutDispProperty, null, webBrowser, new object[] { true });
                 }
             }
             );
@@ -126,7 +120,7 @@ namespace FjeeaRefresher
 
         private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
-            new Thread(new ThreadStart(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 var TryLoginText = await NetworkOperator.TryLogin();
                 if (ValidationCodeParser.CalcSimilarDegree(TryLoginText, LastCachedText) > 20 || LastCachedText == "")
@@ -137,7 +131,7 @@ namespace FjeeaRefresher
                         WebBrowser.NavigateToString(NetworkOperator.FormatUrlInHtml(TryLoginText));
                     });
                 }
-            })).Start();
+            });
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

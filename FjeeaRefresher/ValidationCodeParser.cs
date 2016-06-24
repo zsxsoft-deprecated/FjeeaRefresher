@@ -19,26 +19,14 @@ namespace FjeeaRefresher
         /// Initializes the store.
         /// </summary>
         /// <param name="storePath">The store path.</param>
-        public static void InitStore(string storePath)
-        {
-            for (var i = 0; i <= 9; i++)
-            {
-                studiedStore[i] = new List<string>();
-                Directory.GetFiles($"{storePath}\\{i}").ToList().ForEach(str => {
-                    studiedStore[i].Add(BitmapToString(new Bitmap(str)));
-                });
-            }
-        }
+        public static void InitStore(string storePath) => Enumerable.Range(0, 9).Select(i =>studiedStore[i] = Directory.GetFiles($"{storePath}\\{i}").Select(str => BitmapToString(new Bitmap(str))).ToList());
         /// <summary>
         /// Initializes the store from ResourceSet
         /// </summary>
         /// <param name="dictionaryStore">The dictionary store.</param>
         public static void InitStore(System.Resources.ResourceSet dictionaryStore)
         {
-            for (var i = 0; i <= 9; i++)
-            {
-                studiedStore[i] = new List<string>();
-            }
+            Enumerable.Range(0,10).ToList().ForEach(i=> studiedStore[i] = new List<string>());
             foreach (DictionaryEntry item in dictionaryStore)
             {
                 var resourceKey = item.Key.ToString();
@@ -54,10 +42,7 @@ namespace FjeeaRefresher
         /// </summary>
         /// <param name="codeImagePath">The code image path.</param>
         /// <returns></returns>
-        public static string GetVerifyCode(string codeImagePath)
-        {
-            return GetVerifyCode(new Bitmap(codeImagePath));
-        }
+        public static string GetVerifyCode(string codeImagePath) => GetVerifyCode(new Bitmap(codeImagePath));
 
         /// <summary>
         /// Gets the verify code.
@@ -66,42 +51,33 @@ namespace FjeeaRefresher
         /// <returns></returns>
         public static string GetVerifyCode(Bitmap codeImage)
         {
-            var binarizated = Binarizate(codeImage);
-            var noiseRemoved = RemoveNoise(binarizated);
-            var stringBuilder = new StringBuilder();
-            foreach (var bitmap in DivideImage(noiseRemoved))
+            var mokeLikedStrings = DivideImage(RemoveNoise(Binarizate(codeImage))).Select(bitmap =>
             {
                 var bitmapString = BitmapToString(bitmap);
                 var minimumSimilarDegree = 32767;
                 var mokeLikedNumber = 0;
-                for (var j = 0; j < 10; j++)
+                Enumerable.Range(0, 10).ToList().ForEach(i =>
                 {
-                    foreach (var item in studiedStore[j])
+                    studiedStore[i].ForEach(item =>
                     {
                         var degree = CalcSimilarDegree(bitmapString, item);
                         if (degree < minimumSimilarDegree)
                         {
                             minimumSimilarDegree = degree;
-                            mokeLikedNumber = j;
+                            mokeLikedNumber = i;
                         }
-                    }
-                }
-                stringBuilder.Append(mokeLikedNumber.ToString());
-            }
-            return stringBuilder.ToString();
+                    });
+                });
+                return mokeLikedNumber.ToString();
+            });
+            return string.Join("",mokeLikedStrings);
         }
-
-
         /// <summary>
         /// Clone a new Bitmap Object
         /// </summary>
         /// <param name="B">The Bitmap Object</param>
         /// <returns></returns>
-        public static Bitmap Clone(Bitmap B)
-        {
-            return B.Clone(new Rectangle(0, 0, B.Width, B.Height), B.PixelFormat);
-        }
-
+        public static Bitmap Clone(Bitmap B) => B.Clone(new Rectangle(0, 0, B.Width, B.Height), B.PixelFormat);
         /// <summary>
         /// Binarizate the specified original bitmap.
         /// </summary>
@@ -117,7 +93,6 @@ namespace FjeeaRefresher
                 for (int j = 0; j < newBitmap.Height; j++)
                 {
                     var color = newBitmap.GetPixel(i, j);
-
                     var gray = (int)(color.R * 0.3 + color.G * 0.59 + color.B * 0.11);
                     var newColor = Color.FromArgb(gray, gray, gray);
                     var bppColor = newColor.B < 127 ? Color.Black : Color.White;
@@ -159,16 +134,12 @@ namespace FjeeaRefresher
         /// <returns></returns>
         public static string BitmapToString(Bitmap bitmap)
         {
-            var stringBuilder = new StringBuilder();
-            for (int i = 0; i < bitmap.Width; i++)
-            {
-                for (int j = 0; j < bitmap.Height; j++)
-                {
-                    var color = bitmap.GetPixel(i, j);
-                    stringBuilder.Append(color.R < 127 ? "1" : "0");
-                }
-            }
-            return stringBuilder.ToString();
+            var pixels = Enumerable.Range(0, bitmap.Width).Select(i => Enumerable.Range(0, bitmap.Height).Select(j =>
+                   {
+                       var color = bitmap.GetPixel(i, j);
+                       return color.R < 127 ? "1" : "0";
+                   }));
+            return string.Join("", pixels);
         }
 
         /// <summary>
@@ -179,16 +150,9 @@ namespace FjeeaRefresher
         /// <returns></returns>
         public static int CalcSimilarDegree(string a, string b)
         {
-            int count = 0;
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (b.Length == i) break;
-                if (a[i] != b[i]) count++;
-            }
-            return count;
+            var shortString = a.Length <= b.Length ? a : b;
+            return Enumerable.Range(0, shortString.Length).Sum(i => a[i] != b[i] ? 1 : 0);
         }
-
-
         /// <summary>
         /// Removes the noise.
         /// </summary>
@@ -213,14 +177,9 @@ namespace FjeeaRefresher
                         }
                         else
                         {
-                            if (newBitmap.GetPixel(i - 1, j - 1).R < dgGrayValue) nearDots++;
-                            if (newBitmap.GetPixel(i, j - 1).R < dgGrayValue) nearDots++;
-                            if (newBitmap.GetPixel(i + 1, j - 1).R < dgGrayValue) nearDots++;
-                            if (newBitmap.GetPixel(i - 1, j).R < dgGrayValue) nearDots++;
-                            if (newBitmap.GetPixel(i + 1, j).R < dgGrayValue) nearDots++;
-                            if (newBitmap.GetPixel(i - 1, j + 1).R < dgGrayValue) nearDots++;
-                            if (newBitmap.GetPixel(i, j + 1).R < dgGrayValue) nearDots++;
-                            if (newBitmap.GetPixel(i + 1, j + 1).R < dgGrayValue) nearDots++;
+                            for (int k = i - 1; k <= i + 1; k++)
+                                for (int l = j - 1; l <= j + 1; l++)
+                                    if (i != j&& newBitmap.GetPixel(k, l).R < dgGrayValue) { nearDots++; }
                         }
 
                         if (nearDots < MaxNearPoints)
@@ -232,9 +191,5 @@ namespace FjeeaRefresher
             return newBitmap;
 
         }
-
-
-
-
     }
 }
