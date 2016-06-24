@@ -25,7 +25,7 @@ namespace FjeeaRefresher
         public static string FormatUrlInHtml(string html)
         {
             Regex R = new Regex("(src|href|url)( ?= ?[\"']|\\()((?!http).*?)([\"']|\\))", RegexOptions.IgnoreCase);
-            return "<script>window.alert = window.confirm = window.prompt = function(){};</script>" + R.Replace(html, "$1$2" + IndexUrl + "$3$4").Replace(IndexUrl + "/", IndexUrl);
+            return "<script>window.alert = window.confirm = window.prompt = function(){};</script>" + R.Replace(html, $"$1$2{IndexUrl}$3$4").Replace($"{IndexUrl}/", IndexUrl);
             //return html.Replace("=\"/UEPORTLET/", $"=\"{IndexUrl}UEPORTLET/");
         }
 
@@ -36,17 +36,14 @@ namespace FjeeaRefresher
             {
                 CookieContainer = Cookies,
             };
-            var Ret = new HttpClient(HttpClientHeader);
-            Ret.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2767.5 Safari/537.36");
-            Ret.DefaultRequestHeaders.Referrer = new Uri("http://220.160.54.46/UEPORTLET/jsp/scores/gkcj/scores_enter.jsp");
-
-
-            return Ret;
-        }
-
-        public static FormUrlEncodedContent EncodePostDataToHttpContent(Dictionary<string, string> body)
-        {
-            return new FormUrlEncodedContent(body.ToList());
+            return new HttpClient(HttpClientHeader)
+            {
+                DefaultRequestHeaders =
+                {
+                    { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2767.5 Safari/537.36" },
+                    {"Referer","http://220.160.54.46/UEPORTLET/jsp/scores/gkcj/scores_enter.jsp" }
+                }
+            };
         }
 
         public static async Task<string> GetRandomImage()
@@ -63,23 +60,20 @@ namespace FjeeaRefresher
         public static async Task<string> PostToGKCJ()
         {
             var Http = InitializeHttp();
-            var PostData = new Dictionary<string, string>();
-            PostData.Add("check", await GetRandomImage());
-            PostData.Add("method", "query");
-            PostData.Add("logname", Config.Data.Username);
-            PostData.Add("pwd", Encryption.Encrypt(Config.Data.Password));
-            PostData.Add("ksh", Config.Data.Examinee);
-
-            var Ret = await Http.PostAsync(PostUrl, EncodePostDataToHttpContent(PostData));
+            var PostData = new Dictionary<string, string>
+            {
+                { "check",await GetRandomImage()},
+                {"method", "query" },
+                { "logname", Config.Data.Username},
+                { "pwd", Encryption.Encrypt(Config.Data.Password)},
+                { "ksh", Config.Data.Examinee}
+            };
+            var Ret = await Http.PostAsync(PostUrl, new FormUrlEncodedContent(PostData));
             return await new StreamReader(await Ret.Content.ReadAsStreamAsync(), Encoding.UTF8).ReadToEndAsync();
         }
 
 
-        public static string GetSessionId()
-        {
-            var f = Cookies.List();
-            return f["JSESSIONID"].Value.Replace("0000", "").Replace(":-1", "");
-        }
+        public static string GetSessionId() => Cookies.List()["JSESSIONID"].Value.Replace("0000", "").Replace(":-1", "");
         //        public static string GetSessionId() => Cookies.List()["JSESSIONID"].Value;
 
         public static async Task<string> TryLogin()
@@ -87,14 +81,16 @@ namespace FjeeaRefresher
 
             Console.WriteLine(Encryption.Encrypt(Config.Data.Password));
             var Http = InitializeHttp();
-            var PostData = new Dictionary<string, string>();
-            PostData.Add("check", await GetRandomImage());
-            PostData.Add("method", "login");
-            PostData.Add("secur", "1");
-            PostData.Add("sessionid", GetSessionId());
-            PostData.Add("loginName", Config.Data.Username);
-            PostData.Add("loginPwd", Encryption.Encrypt(Config.Data.Password));
-            var Ret = await Http.PostAsync(LoginUrl, EncodePostDataToHttpContent(PostData));
+            var PostData = new Dictionary<string, string>
+            {
+                {"check", await GetRandomImage() },
+                {"method", "login" },
+                {"secur", "1" },
+                {"sessionid", GetSessionId() },
+                {"loginName", Config.Data.Username },
+                {"loginPwd", Encryption.Encrypt(Config.Data.Password) }
+            };
+            var Ret = await Http.PostAsync(LoginUrl, new FormUrlEncodedContent(PostData));
             return await new StreamReader(await Ret.Content.ReadAsStreamAsync(), Encoding.UTF8).ReadToEndAsync();
         }
 
