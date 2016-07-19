@@ -19,14 +19,14 @@ namespace FjeeaRefresher
         /// Initializes the store.
         /// </summary>
         /// <param name="storePath">The store path.</param>
-        public static void InitStore(string storePath) => Enumerable.Range(0, 9).Select(i =>studiedStore[i] = Directory.GetFiles($"{storePath}\\{i}").Select(str => BitmapToString(new Bitmap(str))).ToList());
+        public static void InitStore(string storePath) => Enumerable.Range(0, 9).Select(i => studiedStore[i] = Directory.GetFiles($"{storePath}\\{i}").Select(str => BitmapToString(new Bitmap(str))).ToList());
         /// <summary>
         /// Initializes the store from ResourceSet
         /// </summary>
         /// <param name="dictionaryStore">The dictionary store.</param>
         public static void InitStore(System.Resources.ResourceSet dictionaryStore)
         {
-            Enumerable.Range(0,10).ToList().ForEach(i=> studiedStore[i] = new List<string>());
+            Enumerable.Range(0, 10).ToList().ForEach(i => studiedStore[i] = new List<string>());
             foreach (DictionaryEntry item in dictionaryStore)
             {
                 var resourceKey = item.Key.ToString();
@@ -34,6 +34,7 @@ namespace FjeeaRefresher
                 var splittedKey = resourceKey.Split('_');
                 var storeKey = Convert.ToInt32(splittedKey[1]);
                 studiedStore[storeKey].Add(BitmapToString(((Bitmap)item.Value)));
+                Console.WriteLine(splittedKey[1]);
             }
         }
 
@@ -53,6 +54,7 @@ namespace FjeeaRefresher
         {
             var mokeLikedStrings = DivideImage(RemoveNoise(Binarizate(codeImage))).Select(bitmap =>
             {
+                // bitmap.Save("Z:\\222222.png");
                 var bitmapString = BitmapToString(bitmap);
                 var minimumSimilarDegree = 32767;
                 var mokeLikedNumber = 0;
@@ -70,7 +72,7 @@ namespace FjeeaRefresher
                 });
                 return mokeLikedNumber.ToString();
             });
-            return string.Join("",mokeLikedStrings);
+            return string.Join("", mokeLikedStrings);
         }
         /// <summary>
         /// Clone a new Bitmap Object
@@ -134,11 +136,13 @@ namespace FjeeaRefresher
         /// <returns></returns>
         public static string BitmapToString(Bitmap bitmap)
         {
-            var pixels = Enumerable.Range(0, bitmap.Width).Select(i => Enumerable.Range(0, bitmap.Height).Select(j =>
-                   {
-                       var color = bitmap.GetPixel(i, j);
-                       return color.R < 127 ? "1" : "0";
-                   }));
+            var pixels = Enumerable.Range(0, bitmap.Width).Select(i =>
+                string.Join("", Enumerable.Range(0, bitmap.Height).Select(j =>
+                {
+                    var color = bitmap.GetPixel(i, j);
+                    return color.R < 127 ? "1" : "0";
+                }))
+            );
             return string.Join("", pixels);
         }
 
@@ -179,7 +183,7 @@ namespace FjeeaRefresher
                         {
                             for (int k = i - 1; k <= i + 1; k++)
                                 for (int l = j - 1; l <= j + 1; l++)
-                                    if (i != j&& newBitmap.GetPixel(k, l).R < dgGrayValue) { nearDots++; }
+                                    if (i != j && newBitmap.GetPixel(k, l).R < dgGrayValue) { nearDots++; }
                         }
 
                         if (nearDots < MaxNearPoints)

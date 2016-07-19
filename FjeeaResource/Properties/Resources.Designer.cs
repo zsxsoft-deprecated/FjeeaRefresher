@@ -2433,6 +2433,16 @@ namespace FjeeaResource.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        public static System.Drawing.Bitmap _5_31 {
+            get {
+                object obj = ResourceManager.GetObject("_5_31", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         public static System.Drawing.Bitmap _5_4 {
             get {
                 object obj = ResourceManager.GetObject("_5_4", resourceCulture);

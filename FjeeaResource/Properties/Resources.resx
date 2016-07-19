@@ -1658,6 +1658,9 @@ function do_encrypt(pwdVl) {
   <data name="_5_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\5-30.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="_5_31" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\222222.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="_5_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\5-4.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

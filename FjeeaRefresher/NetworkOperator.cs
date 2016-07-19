@@ -19,13 +19,16 @@ namespace FjeeaRefresher
         public const string PostUrl = IndexUrl + "UEPORTLET/gkcj.shtml";
         public const string RandomImageUrl = IndexUrl + "UEPORTLET/radomImage";
         public const string LoginUrl = IndexUrl + "UEPORTLET/login.shtml";
+        public const string ResultUrl = IndexUrl + "UEPORTLET/resultLq.shtml";
         public static CookieContainer Cookies = new CookieContainer();
 
 
         public static string FormatUrlInHtml(string html)
         {
             Regex R = new Regex("(src|href|url)( ?= ?[\"']|\\()((?!http).*?)([\"']|\\))", RegexOptions.IgnoreCase);
-            return "<script>window.alert = window.confirm = window.prompt = function(){};</script>" + R.Replace(html, $"$1$2{IndexUrl}$3$4").Replace($"{IndexUrl}/", IndexUrl);
+            var ret1 = "<script>window.alert = window.confirm = window.prompt = function(){};</script>" + R.Replace(html, $"$1$2{IndexUrl}$3$4").Replace($"{IndexUrl}/", IndexUrl);
+            var ret2 = ret1.Replace("gb2312", "utf-8");
+            return ret2;
             //return html.Replace("=\"/UEPORTLET/", $"=\"{IndexUrl}UEPORTLET/");
         }
 
@@ -53,7 +56,8 @@ namespace FjeeaRefresher
             var ImageStream = await Ret.Content.ReadAsStreamAsync();
             var ImageBitmap = new Bitmap(ImageStream);
             string ValidationCode = ValidationCodeParser.GetVerifyCode(ImageBitmap);
-            //ImageBitmap.Save("Z:\\" + ValidationCode + ".jpg");
+            // ImageBitmap.Save("Z:\\" + ValidationCode + ".jpg");
+            
             return ValidationCode;
         }
 
@@ -69,9 +73,23 @@ namespace FjeeaRefresher
                 { "ksh", Config.Data.Examinee}
             };
             var Ret = await Http.PostAsync(PostUrl, new FormUrlEncodedContent(PostData));
-            return await new StreamReader(await Ret.Content.ReadAsStreamAsync(), Encoding.UTF8).ReadToEndAsync();
+            return await new StreamReader(await Ret.Content.ReadAsStreamAsync(), Encoding.Default).ReadToEndAsync();
         }
 
+        public static async Task<string> PostToLQCX()
+        {
+            var Http = InitializeHttp();
+            var PostData = new Dictionary<string, string>
+            {
+                { "check",await GetRandomImage()},
+                {"method", "query" },
+                { "logname", Config.Data.Username},
+                { "pwd", Encryption.Encrypt(Config.Data.Password)},
+                { "ksh", Config.Data.Examinee}
+            };
+            var Ret = await Http.PostAsync(ResultUrl, new FormUrlEncodedContent(PostData));
+            return await new StreamReader(await Ret.Content.ReadAsStreamAsync(), Encoding.Default).ReadToEndAsync();
+        }
 
         public static string GetSessionId() => Cookies.List()["JSESSIONID"].Value.Replace("0000", "").Replace(":-1", "");
         //        public static string GetSessionId() => Cookies.List()["JSESSIONID"].Value;

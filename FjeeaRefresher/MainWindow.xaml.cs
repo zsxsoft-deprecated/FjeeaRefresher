@@ -49,7 +49,7 @@ namespace FjeeaRefresher
         public async void GetScoreInThread()
         {
             Console.WriteLine("Getting score");
-            var TryLoginText = await NetworkOperator.PostToGKCJ();
+            var TryLoginText = await NetworkOperator.PostToLQCX();
             if (ValidationCodeParser.CalcSimilarDegree(TryLoginText, LastCachedText) > 20 || LastCachedText == "")
             {
                 LastCachedText = TryLoginText;
